@@ -6,9 +6,9 @@ import newton.examples
 
 @wp.kernel
 def apply_lateral_force(
-    particle_q: wp.array(dtype=wp.vec3),
-    particle_f: wp.array(dtype=wp.vec3),
-    sim_time_gpu: wp.array(dtype=float),
+    particle_q: wp.array[wp.vec3],
+    particle_f: wp.array[wp.vec3],
+    sim_time_gpu: wp.array[float],
     force_amp: float,
     frequency: float,
 ):
@@ -28,7 +28,7 @@ def apply_lateral_force(
 
 @wp.kernel
 def advance_time(
-    sim_time_gpu: wp.array(dtype=float),
+    sim_time_gpu: wp.array[float],
     dt: float,
 ):
     sim_time_gpu[0] = sim_time_gpu[0] + dt

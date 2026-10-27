@@ -6,8 +6,8 @@ import newton.examples
 
 @wp.kernel
 def apply_lateral_force(
-    particle_q: wp.array(dtype=wp.vec3),
-    particle_f: wp.array(dtype=wp.vec3),
+    particle_q: wp.array[wp.vec3],
+    particle_f: wp.array[wp.vec3],
     force_y: float,
 ):
     i = wp.tid()
@@ -107,14 +107,6 @@ viewer.set_camera(
 count = wp.zeros(1, dtype=int, device=model.device)
 
 print("Selected particles:", count.numpy()[0])
-
-
-graph = None
-
-if wp.get_device().is_cuda:
-    with wp.ScopedCapture(device=model.device) as capture:
-        simulate()  # Solo operaciones de simulación
-    graph = capture.graph
 
 
 while viewer.is_running():
