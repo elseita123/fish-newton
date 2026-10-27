@@ -13,8 +13,10 @@ def apply_lateral_force(
     i = wp.tid()
     p = particle_q[i]
 
-    if p[0] > 0.14 and wp.abs(p[1] - 0.03) < 0.006 and wp.abs(p[2] - 1.05) < 0.006:
+    if (wp.abs(p[0] - 0.16) < 0.001 and p[1] >= 0.0 and p[1] <= 0.06 and p[2] >= 1.0 and p[2] <= 1.10):
         particle_f[i] = particle_f[i] + wp.vec3(0.0, force_y, 0.0)
+
+
 
 
 builder = newton.ModelBuilder()
@@ -32,8 +34,8 @@ builder.add_soft_grid(
     cell_z = 0.01,
 
     density = 1.15e3,
-    k_mu = 2.64e5,
-    k_lambda = 12.95e6, # v (poison) = 0.49
+    k_mu = 1.5e6,
+    k_lambda = 12.95e6, # v (poison ratio) = 0.49
     k_damp = 1.0e2,
     fix_left = True,
 )
@@ -92,6 +94,15 @@ viewer, args = newton.examples.init(parser)
 viewer.hide_loading_splash()
 viewer.set_model(model)
 
+viewer.set_camera(
+    pos=wp.vec3(0.52, -0.62, 1.08),
+    pitch=-5.9,
+    yaw=127.4,
+)
+
+count = wp.zeros(1, dtype=int, device=model.device)
+
+print("Selected particles:", count.numpy()[0])
 
 running = True
 
@@ -101,8 +112,8 @@ while viewer.is_running():
         state_0.clear_forces()
         viewer.apply_forces(state_0)
 
-        force_amp = 0.1
-        frequency = 0.5
+        force_amp = 1
+        frequency = 2
         t = sim_time + substep * sim_dt
         force_y = force_amp * math.sin(2.0 * math.pi * frequency * t)
 
