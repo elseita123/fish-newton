@@ -88,11 +88,15 @@ parser.add_argument(
     default = "vbd",
 )
 
+print("Warp device:", wp.get_device())
+print("CUDA available:", wp.is_cuda_available())
+
+
 
 
 viewer, args = newton.examples.init(parser)
-viewer.hide_loading_splash()
 viewer.set_model(model)
+viewer.hide_loading_splash()
 
 viewer.set_camera(
     pos=wp.vec3(0.52, -0.62, 1.08),
@@ -104,7 +108,14 @@ count = wp.zeros(1, dtype=int, device=model.device)
 
 print("Selected particles:", count.numpy()[0])
 
-running = True
+
+graph = None
+
+if wp.get_device().is_cuda:
+    with wp.ScopedCapture(device=model.device) as capture:
+        simulate()  # Solo operaciones de simulación
+    graph = capture.graph
+
 
 while viewer.is_running():
 
